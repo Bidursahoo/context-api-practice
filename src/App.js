@@ -1,36 +1,28 @@
-import { useState } from "react";
+import { useReducer} from "react";
 import PrintItems from "./PrintItems";
+import ItemsContext from "./Store/items-store";
+import InputField from "./InputField";
+import TodoAction from "./Reducers/TodoReducer";
 
 function App() {
-  const [item , setItems] = useState([]);
-  const [value , setValue] = useState("");
-  function handleChange(event){
-    setValue(event.target.value);
-  }
-
-  function addItem(event){
-    setItems([...item , value]);
-    setValue("")
+  const [item , dispatch] = useReducer(TodoAction , []);
+  
+  function addItem(val){
+    const valObj = {
+      type:"ADD_ITEM",
+      payload:val
+    }
+    dispatch(valObj);
   }
   return (
-    <>
-      <div class="d-flex justify-content-center flex-column mb-3 w-50 align-items-center">
-        <input
-          className="form-control form-control-lg border border-success"
-          type="text"
-          placeholder="Input Value"
-          style={{ width: "511px", marginTop: "3rem", marginRight:"2rem"}}
-          value={value}
-          onChange={handleChange}
-        />
-        <br/>
-        <button type="button" className="btn btn-success" onClick={addItem}>
-          Submit
-        </button>
-        <PrintItems item={item}/>
+    <ItemsContext.Provider value={{
+    item: item , 
+    addItem: addItem}}>
+      <div className="d-flex justify-content-center flex-column mb-3 w-50 align-items-center">
+        <InputField/>
+        <PrintItems/>
       </div>
-    </>
+    </ItemsContext.Provider>
   );
 }
-
 export default App;
